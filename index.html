@@ -11,24 +11,27 @@
 <style>
 /* ============ ТЕМЫ: меняйте цвета здесь ============ */
 :root{
-  --cA:#e5484d;   /* Грудь + бицепс  (красный блин 25 кг) */
-  --cB:#3b82f6;   /* Спина + трицепс (синий блин 20 кг)   */
-  --cC:#f0b429;   /* Плечи + ноги    (жёлтый блин 15 кг)  */
   --r:16px;      /* скругление карточек */
   --f-body:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;
   --f-head:'Unbounded','Onest',system-ui,sans-serif;
 }
-:root,[data-theme=graphite]{
-  --bg:#1c2027; --card:#262b34; --card2:#2f3541; --tx:#eef0f3; --mu:#98a1b0;
-  --ln:#3a414d; --ac:#e6ebf2; --onac:#1c2027; --ok:#4ccf8a; --bad:#ff6b6b;
+/* 1. Зелёная (по умолчанию): графит и зелёный как в XFIT */
+:root,[data-theme=green]{
+  --bg:#1f2024; --card:#2a2c31; --card2:#34373d; --tx:#ffffff; --mu:#9aa1ad;
+  --ln:#3a3d44; --ring:#3a414a; --ac:#36b647; --onac:#0b1a0e; --ok:#4ccf6a; --bad:#ff6b6b;
+  --done:#36b647; --ondone:#0b1a0e;           /* кнопка «выполнено» */
 }
-[data-theme=chalk]{
-  --bg:#e9edf2; --card:#ffffff; --card2:#eef1f5; --tx:#1a1f27; --mu:#6a7483;
-  --ln:#d5dbe3; --ac:#1a1f27; --onac:#ffffff; --ok:#1f9d5c; --bad:#d6434a;
+/* 2. Белая: стандартная светлая */
+[data-theme=white]{
+  --bg:#f3f5f8; --card:#ffffff; --card2:#eceff3; --tx:#121418; --mu:#6b7280;
+  --ln:#e1e5ea; --ring:#c9ced6; --ac:#2a9444; --onac:#ffffff; --ok:#1f9d3c; --bad:#d6434a;
+  --done:#2a9444; --ondone:#ffffff;
 }
-[data-theme=green]{
-  --bg:#ecf6e8; --card:#ffffff; --card2:#e3f1dd; --tx:#16301a; --mu:#5d7a60;
-  --ln:#cfe3c8; --ac:#6fe04a; --onac:#10270c; --ok:#1f9d3c; --bad:#d6434a;
+/* 3. Синяя: лазурный на тёмно-синем */
+[data-theme=blue]{
+  --bg:#0f172a; --card:#1e293b; --card2:#2a3a54; --tx:#f8fafc; --mu:#94a3b8;
+  --ln:#334155; --ring:#475569; --ac:#38bdf8; --onac:#0f172a; --ok:#34d399; --bad:#fb7185;
+  --done:#3ddc84; --ondone:#07210f;
 }
 /* ==================================================== */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -49,8 +52,11 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;paddin
 .hero svg{flex:none;width:108px;height:108px}
 .opts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
 .opt{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:13px 14px;text-align:left;border:2px solid transparent}
-.opt.sel{border-color:var(--pc)}
-.dot{width:14px;height:14px;border-radius:50%;background:var(--pc);flex:none;box-shadow:inset 0 0 0 3px color-mix(in srgb,var(--pc) 60%,#000 0%),inset 0 0 0 5px rgba(255,255,255,.35)}
+.rad{width:22px;height:22px;border-radius:50%;border:2px solid var(--ring);flex:none;display:grid;place-items:center}
+.opt.sel .rad{border-color:var(--ac)}
+.opt.sel .rad::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--ac)}
+.sdot{width:14px;height:14px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px rgba(128,128,128,.5)}
+.badge{width:34px;height:34px;border-radius:50%;border:2px solid var(--ring);display:grid;place-items:center;font:700 14px var(--f-head);flex:none}
 .opt b{font-weight:600;flex:1}
 .tag{font-size:12px;color:var(--mu)}
 .row{display:flex;gap:10px;align-items:center;margin-bottom:14px}
@@ -59,36 +65,38 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;paddin
 .btn.sec{background:var(--card2);color:var(--tx);height:44px;font-size:15px;font-weight:600}
 .sub{font-weight:600;margin:20px 0 10px}
 .themes{display:flex;gap:10px}
-.sw{flex:1;height:44px;border-radius:12px;border:2px solid var(--ln);font-size:14px;font-weight:600}
+.sw{flex:1;height:44px;border-radius:12px;border:2px solid var(--ln);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
 .sw.sel{border-color:var(--tx)}
 
 /* тренировка */
-.sess{--pc:var(--cA)}
 .bar{height:6px;background:var(--card2);border-radius:3px;overflow:hidden;margin:10px 0 4px}
-.bar i{display:block;height:100%;background:var(--pc);width:0;transition:width .25s}
+.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .25s}
 .sec-t{display:flex;align-items:center;gap:10px;margin:22px 2px 10px;font-family:var(--f-head);font-size:15px}
 .ex{background:var(--card);border-radius:var(--r);padding:14px 12px 12px;margin-bottom:10px}
 .ex h3{font-size:16px;font-weight:600;padding:0 4px}
 .prev{padding:2px 4px 10px;font-size:13px;color:var(--mu)}
 .set{display:grid;grid-template-columns:26px 1fr 14px 1fr 46px;gap:6px;align-items:center;margin-bottom:6px;padding:4px;border-radius:14px}
 .set.time{grid-template-columns:26px 1fr 40px 46px}
-.set.on{background:color-mix(in srgb,var(--pc) 20%,var(--card))}
+.set.on{background:color-mix(in srgb,var(--done) 16%,var(--card))}
 .set .n{text-align:center;color:var(--mu);font-size:14px}
 .set .x{text-align:center;color:var(--mu)}
 .set input{width:100%;height:44px;border-radius:12px;border:0;background:var(--card2);color:var(--tx);font:600 17px var(--f-body);text-align:center;outline:none;min-width:0}
-.set input:focus{box-shadow:0 0 0 2px var(--pc)}
+.set input:focus{box-shadow:0 0 0 2px var(--ac)}
 .set input::placeholder{color:var(--mu);opacity:.55;font-weight:500}
 .chk{width:44px;height:44px;border-radius:50%;border:2px solid var(--ln);display:grid;place-items:center;color:transparent;justify-self:center}
-.set.on .chk{background:var(--pc);border-color:var(--pc);color:#fff}
+.set.on .chk{background:var(--done);border-color:var(--done);color:var(--ondone)}
 .mini{display:flex;gap:8px;margin-top:6px}
 .mini button{flex:1;height:36px;border-radius:10px;background:var(--card2);color:var(--mu);font-size:14px}
 
 /* история */
 .hist{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border-radius:14px;padding:14px;margin-bottom:8px}
-.hist .dot{width:18px;height:18px}
 .hist div{flex:1}
 .hist b{font-weight:600;display:block}
 .del{color:var(--mu);font-size:22px;padding:4px 8px}
+.month{font-family:var(--f-head);font-size:16px;font-weight:700;color:var(--tx);margin:24px 2px 10px}
+.month:first-of-type{margin-top:4px}
+.pr{display:flex;align-items:center;gap:4px;color:var(--ac);font-weight:700;font-size:15px;flex:none}
+.pr svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .empty{text-align:center;color:var(--mu);padding:40px 20px}
 
 /* статистика */
@@ -129,7 +137,7 @@ svg.chart{width:100%;height:auto;display:block;margin-top:10px}
    kind:'min' — упражнение на время (кардио, минуты).
    Не меняйте id у существующих упражнений — по ним считается статистика. */
 const PLAN={
- A:{name:'Грудь + бицепс',color:'var(--cA)',blocks:[
+ A:{name:'Грудь + бицепс',blocks:[
   {t:'Разминка',ex:[
     {id:'cardio',n:'Кардио (эллипсоид / беговая)',sets:1,kind:'min'},
     {id:'pullup5',n:'Подтягивания (5 кг)',sets:1}]},
@@ -142,7 +150,7 @@ const PLAN={
     {id:'curl',n:'Подъём штанги на бицепс стоя',sets:3},
     {id:'revcurl',n:'Подъём штанги обратным хватом',sets:3},
     {id:'hammer',n:'Подъём штанги на бицепс (молот)',sets:4}]}]},
- B:{name:'Спина + трицепс',color:'var(--cB)',blocks:[
+ B:{name:'Спина + трицепс',blocks:[
   {t:'Разминка',ex:[
     {id:'cardio',n:'Кардио (эллипсоид / беговая)',sets:1,kind:'min'}]},
   {t:'Спина',ex:[
@@ -153,7 +161,7 @@ const PLAN={
   {t:'Трицепс',ex:[
     {id:'cgbench',n:'Жим штанги лёжа узким хватом',sets:3},
     {id:'pushdown',n:'Разгибание рук в блоке',sets:3}]}]},
- C:{name:'Плечи + ноги',color:'var(--cC)',blocks:[
+ C:{name:'Плечи + ноги',blocks:[
   {t:'Разминка',ex:[
     {id:'cardio',n:'Кардио (эллипсоид / беговая)',sets:1,kind:'min'},
     {id:'pullup',n:'Подтягивания',sets:1}]},
@@ -167,7 +175,7 @@ const PLAN={
     {id:'lateral',n:'Разведение гантелей в сторону',sets:3}]}]}
 };
 const ORDER=['A','B','C'];
-const THEMES=[['graphite','Графит'],['chalk','Мел'],['green','Зелёная']];
+const THEMES=[['green','Зелёная','#5cc14e'],['white','Белая','#ffffff'],['blue','Синяя','#38bdf8']];
 
 /* ================= ХРАНИЛИЩЕ ================= */
 const tg=window.Telegram&&Telegram.WebApp;
@@ -203,7 +211,7 @@ const ago=s=>{const n=Math.round((parse(ymd(new Date()))-parse(s))/864e5);
   if(n<0)return fmt(s);if(n===0)return 'сегодня';if(n===1)return 'вчера';
   return n+' '+pl(n,'день','дня','дней')+' назад'};
 const num=v=>String(v).replace('.',',');
-const S={sessions:{},theme:'graphite',tab:'home',open:null,
+const S={sessions:{},theme:'green',tab:'home',open:null,
   homeDate:ymd(new Date()),homeType:null,statEx:'bench45',statM:'e1rm',pending:new Set(),timer:null};
 
 const list=()=>Object.values(S.sessions).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:a.k<b.k?1:-1);
@@ -245,12 +253,12 @@ function applyTheme(){
 }
 
 /* ================= ЭКРАНЫ ================= */
-function plate(color,n){
+function ring(n,frac){
+  const C=2*Math.PI*50;
   return `<svg viewBox="0 0 120 120" aria-hidden="true">
-  <circle cx="60" cy="60" r="56" fill="${color}"/>
-  <circle cx="60" cy="60" r="46" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="3"/>
-  <circle cx="60" cy="60" r="16" fill="var(--card)"/>
-  <text x="60" y="68" text-anchor="middle" font-family="Unbounded,sans-serif" font-weight="700" font-size="22" fill="${color}">${n}</text></svg>`;
+  <circle cx="60" cy="60" r="50" fill="none" stroke="var(--ln)" stroke-width="4"/>
+  <circle cx="60" cy="60" r="50" fill="none" stroke="var(--ac)" stroke-width="4" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-frac)).toFixed(1)}" transform="rotate(-90 60 60)"/>
+  <text x="60" y="73" text-anchor="middle" font-family="Unbounded,sans-serif" font-weight="700" font-size="40" fill="var(--tx)">${n}</text></svg>`;
 }
 
 function homeView(){
@@ -260,37 +268,37 @@ function homeView(){
   const rows=ORDER.map(k=>{
     const isNext=k===nextType(),isLast=last&&last.t===k;
     const tag=isNext?'по плану':isLast?'была последней':'';
-    return `<button class="opt ${k===t?'sel':''}" style="--pc:${PLAN[k].color}" data-act="type" data-t="${k}"><i class="dot"></i><b>${PLAN[k].name}</b><span class="tag">${tag}</span></button>`;
+    return `<button class="opt ${k===t?'sel':''}" data-act="type" data-t="${k}"><i class="rad"></i><b>${PLAN[k].name}</b><span class="tag">${tag}</span></button>`;
   }).join('');
   const rec=l.slice(0,3).map(s=>histRow(s)).join('');
   return `
   <div class="top"><h1>Тренировки</h1></div>
-  <div class="hero" style="--pc:${PLAN[t].color}">
+  <div class="hero">
     <div style="flex:1">
       <p class="small mu">${t===nextType()?'Сегодня по плану':'Вы выбрали'}</p>
       <h2>${PLAN[t].name}</h2>
       <p class="small mu">${last?`Прошлый раз: ${PLAN[last.t].name}, ${ago(last.d)}`:'Это ваша первая запись'}</p>
     </div>
-    ${plate(PLAN[t].color,ORDER.indexOf(t)+1)}
+    ${ring(ORDER.indexOf(t)+1,(ORDER.indexOf(t)+1)/ORDER.length)}
   </div>
   <div class="opts">${rows}</div>
   <div class="row"><input class="date" type="date" id="hd" value="${S.homeDate}"></div>
   <button class="btn" data-act="start">${exists?'Продолжить тренировку':'Начать тренировку'}</button>
   ${rec?`<p class="sub">Последние тренировки</p>${rec}`:''}
   <p class="sub">Оформление</p>
-  <div class="themes">${THEMES.map(([k,n])=>`<button class="sw ${S.theme===k?'sel':''}" data-act="theme" data-th="${k}">${n}</button>`).join('')}</div>`;
+  <div class="themes">${THEMES.map(([k,n,c])=>`<button class="sw ${S.theme===k?'sel':''}" data-act="theme" data-th="${k}"><i class="sdot" style="background:${c}"></i>${n}</button>`).join('')}</div>`;
 }
 
 function sessionView(s){
   const P=PLAN[s.t];const [d,t]=counts(s);
-  let h=`<div class="sess" style="--pc:${P.color}">
+  let h=`<div class="sess">
   <button class="back" data-act="back">‹ Назад</button>
   <h1 class="head" style="font-size:22px">${P.name}</h1>
   <p class="small mu">${fmtW(s.d)} · сохраняется автоматически</p>
   <div class="bar"><i id="pbar" style="width:${t?d/t*100:0}%"></i></div>
   <p class="small mu" id="ptxt">Выполнено ${d} из ${t}</p>`;
   for(const b of P.blocks){
-    h+=`<div class="sec-t"><i class="dot"></i>${b.t}</div>`;
+    h+=`<div class="sec-t">${b.t}</div>`;
     for(const x of b.ex){
       const sets=s.e[x.id]||[];const pv=prevFor(s,x.id);
       const time=x.kind==='min';
@@ -310,15 +318,58 @@ function sessionView(s){
 }
 const CHECK='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
+const TROPHY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>';
+const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+
+/* рекорд = результат лучше всех прошлых тренировок по этому упражнению
+   (по расчётному максимуму; для упражнений без веса — по повторениям) */
+function bestOf(sets){
+  let e=0,r0=0;
+  for(const a of sets){
+    if(!a[2])continue;
+    const w=parseFloat(a[0])||0,r=parseFloat(a[1])||0;
+    if(r<=0)continue;
+    if(w>0){const v=w*(1+r/30);if(v>e)e=v}else if(r>r0)r0=r;
+  }
+  return{e,r:r0};
+}
+function prCount(s){
+  const asc=list().slice().reverse();
+  const before=asc.slice(0,asc.findIndex(x=>x.k===s.k));
+  let n=0;
+  for(const id in s.e){
+    const cur=bestOf(s.e[id]);
+    if(!cur.e&&!cur.r)continue;
+    let pe=0,pr=0,had=false;
+    for(const o of before){
+      if(!o.e[id])continue;
+      const b=bestOf(o.e[id]);
+      if(b.e||b.r){had=true;pe=Math.max(pe,b.e);pr=Math.max(pr,b.r)}
+    }
+    if(!had)continue;
+    if(cur.e?cur.e>pe+0.05:cur.r>pr)n++;
+  }
+  return n;
+}
+
 function histRow(s){
-  const [d,t]=counts(s);
-  return `<div style="display:flex;gap:6px;align-items:center"><button class="hist" style="--pc:${PLAN[s.t].color}" data-act="open" data-k="${s.k}"><i class="dot"></i><div><b>${PLAN[s.t].name}</b><span class="small mu">${fmtW(s.d)} · ${d} из ${t} подходов</span></div></button></div>`;
+  const [d,t]=counts(s);const pr=prCount(s);
+  return `<div style="display:flex;gap:6px;align-items:center"><button class="hist" data-act="open" data-k="${s.k}"><span class="badge">${ORDER.indexOf(s.t)+1}</span><div><b>${PLAN[s.t].name}</b><span class="small mu">${fmtW(s.d)} · ${d} из ${t} подходов</span></div>${pr?`<span class="pr" aria-label="Рекордов: ${pr}">${TROPHY}${pr}</span>`:''}</button></div>`;
 }
 function histView(){
   const l=list();
-  return `<div class="top"><h1>История</h1></div>`+(l.length?l.map(s=>
-    `<div style="display:flex;align-items:center;gap:4px"><div style="flex:1">${histRow(s)}</div><button class="del" data-act="del" data-k="${s.k}" aria-label="Удалить">×</button></div>`).join('')
-    :`<p class="empty">Здесь появятся ваши тренировки. Начните первую на вкладке «Тренировка».</p>`);
+  if(!l.length)return `<div class="top"><h1>История</h1></div><p class="empty">Здесь появятся ваши тренировки. Начните первую на вкладке «Тренировка».</p>`;
+  const yNow=new Date().getFullYear();
+  let out=`<div class="top"><h1>История</h1></div>`,cur='';
+  for(const s of l){
+    const m=s.d.slice(0,7);
+    if(m!==cur){
+      cur=m;const [y,mo]=m.split('-').map(Number);
+      out+=`<h2 class="month">${MONTHS[mo-1]}${y!==yNow?' '+y:''}</h2>`;
+    }
+    out+=`<div style="display:flex;align-items:center;gap:4px"><div style="flex:1">${histRow(s)}</div><button class="del" data-act="del" data-k="${s.k}" aria-label="Удалить">×</button></div>`;
+  }
+  return out;
 }
 
 /* ---- статистика ---- */
@@ -453,7 +504,7 @@ applyTheme();
 store.getAll().then(o=>{
   for(const k in o){
     if(k.startsWith('s_')){try{const v=JSON.parse(o[k]);v.k=k;S.sessions[k]=v}catch(_){}}
-    else if(k==='theme'&&o[k])S.theme=o[k];
+    else if(k==='theme'&&THEMES.some(t=>t[0]===o[k]))S.theme=o[k];
   }
   applyTheme();render(true);
 });
